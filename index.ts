@@ -1,6 +1,6 @@
 import { Cuestionario } from "./local/cuestionario";
 import { CuestionarioEmpleado } from "./local/cuestionarioempleado";
-
+import { eachDayOfInterval, getDay } from "date-fns";
 // const setTZ = require("set-tz");
 // setTZ("UTC");
 
@@ -8,7 +8,7 @@ import SMTPTransport from "nodemailer/lib/smtp-transport";
 const express = require("express");
 import { Request, Response } from "express";
 import { Column, createConnection } from "typeorm";
-import { MoreThanOrEqual, LessThanOrEqual } from "typeorm";
+import { MoreThanOrEqual, LessThanOrEqual, Between } from "typeorm";
 import { Place } from "./local/place";
 import cors from "cors";
 import nodemailer from "nodemailer";
@@ -53,13 +53,52 @@ createConnection().then((connection) => {
 
   // register routes
   app.get("/reset", async function (req: Request, res: Response) {
+    const days = eachDayOfInterval({
+      start: new Date(2021, 0, 19),
+      end: new Date(2021, 0, 31),
+    });
+    let lun: Array<{ date: string; day: string }> = [];
+    let mar: Array<{ date: string; day: string }> = [];
+    let mie: Array<{ date: string; day: string }> = [];
+    let jue: Array<{ date: string; day: string }> = [];
+    let vie: Array<{ date: string; day: string }> = [];
+    let sab: Array<{ date: string; day: string }> = [];
+    let dom: Array<{ date: string; day: string }> = [];
+
+    for (let day of days) {
+      const copy = new Date();
+      copy.setDate(day.getDate() + 0);
+      switch (getDay(day)) {
+        case 0:
+          dom.push({ date: copy.toISOString(), day: "Domingo" });
+          break;
+        case 1:
+          lun.push({ date: copy.toISOString(), day: "Lunes" });
+          break;
+        case 2:
+          mar.push({ date: copy.toISOString(), day: "Martes" });
+          break;
+        case 3:
+          mie.push({ date: copy.toISOString(), day: "Miércoles" });
+          break;
+        case 4:
+          jue.push({ date: copy.toISOString(), day: "Jueves" });
+          break;
+        case 5:
+          vie.push({ date: copy.toISOString(), day: "Viernes" });
+          break;
+        case 6:
+          sab.push({ date: copy.toISOString(), day: "Sábado" });
+          break;
+      }
+    }
+
     // here we will have logic to return all users
     let config = [
       {
         place: "Villa María del Triunfo",
         name: "A-01 Recreaciòn",
-        dates: ["2021-01-06", "2021-01-08", "2021-01-10"],
-        days: ["Miércoles", "Viernes", "Domingo"],
+        dates: [mie, sab, dom],
         quota: 10000,
         hoursBegin: ["05:45:00", "13:45:00"],
         hoursEnd: ["11:00:00", "18:00:00"],
@@ -68,8 +107,7 @@ createConnection().then((connection) => {
       {
         place: "Villa María del Triunfo",
         name: "A-05 Tenis CT01",
-        dates: ["2021-01-05", "2021-01-07", "2021-01-09"],
-        days: ["Martes", "Jueves", "Sàbado"],
+        dates: [mar, jue, sab],
         quota: 4,
         hoursBegin: [
           "06:00:00",
@@ -98,8 +136,7 @@ createConnection().then((connection) => {
       {
         place: "Villa María del Triunfo",
         name: "A-05 Tenis CT02",
-        dates: ["2021-01-05", "2021-01-07", "2021-01-09"],
-        days: ["Martes", "Jueves", "Sàbado"],
+        dates: [mar, jue, sab],
         quota: 4,
         hoursBegin: [
           "06:00:00",
@@ -128,8 +165,7 @@ createConnection().then((connection) => {
       {
         place: "Villa María del Triunfo",
         name: "A-06 Atletismo",
-        dates: ["2021-01-05", "2021-01-07", "2021-01-09"],
-        days: ["Martes", "Jueves", "Sàbado"],
+        dates: [mar, jue, sab],
         quota: 9999,
         hoursBegin: ["05:45:00", "13:45:00"],
         hoursEnd: ["11:00:00", "18:00:00"],
@@ -138,8 +174,7 @@ createConnection().then((connection) => {
       {
         place: "Villa María del Triunfo",
         name: "A-07 Ciclismo",
-        dates: ["2021-01-05", "2021-01-07", "2021-01-09"],
-        days: ["Martes", "Jueves", "Sàbado"],
+        dates: [mar, jue, sab],
         quota: 9999,
         hoursBegin: ["05:45:00", "13:45:00"],
         hoursEnd: ["11:00:00", "18:00:00"],
@@ -150,17 +185,20 @@ createConnection().then((connection) => {
       console.log("reset");
       for (let i = 0; i < config.length; i++) {
         for (let j = 0; j < config[i].dates.length; j++) {
-          for (let k = 0; k < config[i].hoursBegin.length; k++) {
-            await placeRepository.insert({
-              place: config[i].place,
-              name: config[i].name,
-              date: config[i].dates[j],
-              quota: config[i].quota,
-              hourBegin: config[i].hoursBegin[k],
-              hourEnd: config[i].hoursEnd[k],
-              day: config[i].days[j],
-              door: config[i].door,
-            });
+          for (let k = 0; k < config[i].dates[j].length; k++) {
+            for (let l = 0; l < config[i].hoursBegin.length; l++) {
+              console.log(config[i].dates);
+              await placeRepository.insert({
+                place: config[i].place,
+                name: config[i].name,
+                date: config[i].dates[j][k].date,
+                quota: config[i].quota,
+                hourBegin: config[i].hoursBegin[l],
+                hourEnd: config[i].hoursEnd[l],
+                day: config[i].dates[j][k].day,
+                door: config[i].door,
+              });
+            }
           }
         }
       }
@@ -268,7 +306,6 @@ createConnection().then((connection) => {
       ("0" + (date_ob.getMonth() + 1)).slice(-2) +
       "-" +
       ("0" + date_ob.getUTCDate()).slice(-2);
-    console.log(_date);
 
     let _time =
       date_ob.getHours() +
@@ -276,7 +313,6 @@ createConnection().then((connection) => {
       date_ob.getMinutes() +
       ":" +
       date_ob.getSeconds();
-    console.log(_time);
 
     let { quota, ...rest } = req.query;
     // @ts-ignore
@@ -286,10 +322,14 @@ createConnection().then((connection) => {
       console.log(quota);
       // @ts-ignore
       rest.quota = MoreThanOrEqual(quota);
-
-      //where.push({ quota: LessThanOrEqual(quota) });
-      //where.push({ quota: LessThanOrEqual(1) });
     }
+    let lo_date = new Date();
+    let hi_date = new Date();
+    hi_date.setDate(lo_date.getDate() + 1);
+
+    // @ts-ignore
+    rest.date = Between(lo_date, hi_date);
+
     console.log("ERST");
     console.log(rest);
     let places = await placeRepository.find({
