@@ -1,6 +1,6 @@
 import { Cuestionario } from "./local/cuestionario";
 import { CuestionarioEmpleado } from "./local/cuestionarioempleado";
-import { eachDayOfInterval, getDay } from "date-fns";
+import { eachDayOfInterval, getDay, add } from "date-fns";
 // const setTZ = require("set-tz");
 // setTZ("UTC");
 
@@ -55,8 +55,9 @@ createConnection().then((connection) => {
   app.get("/reset", async function (req: Request, res: Response) {
     const days = eachDayOfInterval({
       start: new Date(2021, 0, 19),
-      end: new Date(2021, 0, 31),
+      end: new Date(2021, 4, 31),
     });
+
     let lun: Array<{ date: string; day: string }> = [];
     let mar: Array<{ date: string; day: string }> = [];
     let mie: Array<{ date: string; day: string }> = [];
@@ -66,8 +67,10 @@ createConnection().then((connection) => {
     let dom: Array<{ date: string; day: string }> = [];
 
     for (let day of days) {
-      const copy = new Date();
-      copy.setDate(day.getDate() + 0);
+      let copy = add(day, {
+        days: 1,
+      });
+      console.log(copy.toISOString());
       switch (getDay(day)) {
         case 0:
           dom.push({ date: copy.toISOString(), day: "Domingo" });
@@ -187,7 +190,6 @@ createConnection().then((connection) => {
         for (let j = 0; j < config[i].dates.length; j++) {
           for (let k = 0; k < config[i].dates[j].length; k++) {
             for (let l = 0; l < config[i].hoursBegin.length; l++) {
-              console.log(config[i].dates);
               await placeRepository.insert({
                 place: config[i].place,
                 name: config[i].name,
