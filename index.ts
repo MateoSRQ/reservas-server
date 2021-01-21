@@ -1,6 +1,6 @@
 import { Cuestionario } from "./local/cuestionario";
 import { CuestionarioEmpleado } from "./local/cuestionarioempleado";
-import { eachDayOfInterval, getDay, add } from "date-fns";
+import { eachDayOfInterval, getDay, add, sub } from "date-fns";
 // const setTZ = require("set-tz");
 // setTZ("UTC");
 
@@ -325,15 +325,22 @@ createConnection().then((connection) => {
       // @ts-ignore
       rest.quota = MoreThanOrEqual(quota);
     }
-    let lo_date = new Date();
-    let hi_date = new Date();
-    hi_date.setDate(lo_date.getDate() + 1);
 
+    let now = new Date();
+
+    let lo_date = sub(now, {
+      days: 1,
+    });
+
+    let hi_date = add(now, {
+      days: 1,
+    });
+
+    console.log(lo_date);
+    console.log(hi_date);
     // @ts-ignore
     rest.date = Between(lo_date, hi_date);
 
-    console.log("ERST");
-    console.log(rest);
     let places = await placeRepository.find({
       where: rest,
     });
