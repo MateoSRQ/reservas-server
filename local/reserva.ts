@@ -23,8 +23,11 @@ export class Reserva {
   @Column()
   email: string;
 
-  @Column({ type: "date" })
+  @Column({ type: "date", nullable: true })
   edad: string;
+
+  @Column({ type: "date" })
+  nac: string;
 
   @Column()
   sexo: string;

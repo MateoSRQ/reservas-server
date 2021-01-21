@@ -344,6 +344,9 @@ createConnection().then((connection) => {
   app.post("/reservas", async function (req: Request, res: Response) {
     let { grupo, event_id, ...rest } = req.body;
 
+    console.log("REQ");
+    console.log(req.body);
+
     // chequear en el mismo dia
     // @ts-ignore
     let oneThere = await reservaRepository.find({
@@ -416,7 +419,7 @@ createConnection().then((connection) => {
       await transporter.sendMail(
         {
           from:
-            '"Proyecto Especial Juegos Panamericanos Lima 2019" noreply$lima2019.pe',
+            '"Proyecto Especial Juegos Panamericanos Lima 2019" noreply@lima2019.pe',
           //from: "msanroman@legado.gob.pe",
           to: rest.email,
           subject: "Confirmación de reserva Legado Panamericanos",
