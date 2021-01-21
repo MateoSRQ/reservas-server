@@ -100,16 +100,36 @@ createConnection().then((connection) => {
     let config = [
       {
         place: "Villa María del Triunfo",
-        name: "A-01 Recreaciòn",
+        name: "Recreaciòn",
         dates: [mie, sab, dom],
         quota: 10000,
-        hoursBegin: ["05:45:00", "13:45:00"],
-        hoursEnd: ["11:00:00", "18:00:00"],
+        hoursBegin: [
+          "06:00:00",
+          "07:00:00",
+          "08:00:00",
+          "09:00:00",
+          "10:00:00",
+          "14:00:00",
+          "15:00:00",
+          "16:00:00",
+          "17:00:00",
+        ],
+        hoursEnd: [
+          "07:00:00",
+          "08:00:00",
+          "09:00:00",
+          "10:00:00",
+          "11:00:00",
+          "15:00:00",
+          "16:00:00",
+          "17:00:00",
+          "18:00:00",
+        ],
         door: "VMZP05X",
       },
       {
         place: "Villa María del Triunfo",
-        name: "A-05 Tenis CT01",
+        name: "Tenis Cancha 01",
         dates: [mar, jue, sab],
         quota: 4,
         hoursBegin: [
@@ -138,7 +158,7 @@ createConnection().then((connection) => {
       },
       {
         place: "Villa María del Triunfo",
-        name: "A-05 Tenis CT02",
+        name: "Tenis Cancha 02",
         dates: [mar, jue, sab],
         quota: 4,
         hoursBegin: [
@@ -167,20 +187,60 @@ createConnection().then((connection) => {
       },
       {
         place: "Villa María del Triunfo",
-        name: "A-06 Atletismo",
+        name: "Atletismo",
         dates: [mar, jue, sab],
         quota: 9999,
-        hoursBegin: ["05:45:00", "13:45:00"],
-        hoursEnd: ["11:00:00", "18:00:00"],
+        hoursBegin: [
+          "06:00:00",
+          "07:00:00",
+          "08:00:00",
+          "09:00:00",
+          "10:00:00",
+          "14:00:00",
+          "15:00:00",
+          "16:00:00",
+          "17:00:00",
+        ],
+        hoursEnd: [
+          "07:00:00",
+          "08:00:00",
+          "09:00:00",
+          "10:00:00",
+          "11:00:00",
+          "15:00:00",
+          "16:00:00",
+          "17:00:00",
+          "18:00:00",
+        ],
         door: "VMZP08X",
       },
       {
         place: "Villa María del Triunfo",
-        name: "A-07 Ciclismo",
+        name: "Ciclismo",
         dates: [mar, jue, sab],
         quota: 9999,
-        hoursBegin: ["05:45:00", "13:45:00"],
-        hoursEnd: ["11:00:00", "18:00:00"],
+        hoursBegin: [
+          "06:00:00",
+          "07:00:00",
+          "08:00:00",
+          "09:00:00",
+          "10:00:00",
+          "14:00:00",
+          "15:00:00",
+          "16:00:00",
+          "17:00:00",
+        ],
+        hoursEnd: [
+          "07:00:00",
+          "08:00:00",
+          "09:00:00",
+          "10:00:00",
+          "11:00:00",
+          "15:00:00",
+          "16:00:00",
+          "17:00:00",
+          "18:00:00",
+        ],
         door: "VMZP08X",
       },
     ];
@@ -433,7 +493,7 @@ createConnection().then((connection) => {
           //text: `Estimado/a ${rest.nombres}: Ud. ha sido confirmado`,
           html: `
             <p>Estimado/a ${rest.nombres}:</p>
-            <p>Queda confirmada su presencia para la sede de ${place.place}, en el evento: ${place.name}, el día ${place.date} de ${place.hourBegin} a ${place.hourEnd}.</p>
+            <p>Queda confirmada su presencia para la sede de ${place.place}, en la actividad: ${place.name}, el día ${place.date} de ${place.hourBegin} a ${place.hourEnd}.</p>
             <p>Las siguientes personas han sido registradas:</p>
             <ul>
                 ${list}
