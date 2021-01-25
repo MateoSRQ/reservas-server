@@ -1,4 +1,4 @@
-<li>import { Cuestionario } from "./local/cuestionario";
+import { Cuestionario } from "./local/cuestionario";
 import { CuestionarioEmpleado } from "./local/cuestionarioempleado";
 import { eachDayOfInterval, getDay, add, sub } from "date-fns";
 
