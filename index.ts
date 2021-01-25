@@ -1,6 +1,7 @@
-import { Cuestionario } from "./local/cuestionario";
+<li>import { Cuestionario } from "./local/cuestionario";
 import { CuestionarioEmpleado } from "./local/cuestionarioempleado";
 import { eachDayOfInterval, getDay, add, sub } from "date-fns";
+
 // const setTZ = require("set-tz");
 // setTZ("UTC");
 
@@ -15,6 +16,8 @@ import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import { Reserva } from "./local/reserva";
 import moment from "moment";
+import fileUpload, { UploadedFile } from "express-fileupload";
+import { v4 as uuidv4 } from "uuid";
 
 dotenv.config();
 
@@ -50,6 +53,11 @@ createConnection().then((connection) => {
   const app = express();
   app.use(cors());
   app.use(express.json());
+  app.use(
+    fileUpload({
+      limits: { fileSize: 50 * 1024 * 1024 },
+    })
+  );
 
   // register routes
   app.get("/reset", async function (req: Request, res: Response) {
@@ -408,6 +416,34 @@ createConnection().then((connection) => {
     res.json(places);
   });
 
+  app.post("/file", async function (req: Request, res: Response) {
+    console.log(req.files);
+    let sampleFile: any;
+    let uploadPath;
+
+    if (!req.files || Object.keys(req.files).length === 0) {
+      return res.status(400).send("No files were uploaded.");
+    }
+
+    // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+    if (req.files.length) {
+      sampleFile = req.files[0];
+    } else {
+      sampleFile = req.files.file;
+    }
+    console.log(sampleFile.name);
+    let extension = sampleFile.name.split(".");
+    extension = extension[extension.length - 1];
+    extension = uuidv4() + "." + extension;
+    uploadPath = __dirname + "/upload/" + extension;
+    //
+    // // Use the mv() method to place the file somewhere on your server
+    sampleFile.mv(uploadPath, function (err: any) {
+      if (err) return res.status(500).send(err);
+      res.send({ original: sampleFile.name, coded: extension });
+    });
+  });
+
   app.post("/reservas", async function (req: Request, res: Response) {
     let { grupo, event_id, ...rest } = req.body;
 
@@ -493,11 +529,18 @@ createConnection().then((connection) => {
           //text: `Estimado/a ${rest.nombres}: Ud. ha sido confirmado`,
           html: `
             <p>Estimado/a ${rest.nombres}:</p>
-            <p>Queda confirmada su presencia para la sede de ${place.place}, en la actividad: ${place.name}, el día ${place.date} de ${place.hourBegin} a ${place.hourEnd}.</p>
+            <p>ueda confirmado su registro para ${place.place}, en la actividad de portiva ${place.name}, el día ${place.date} de ${place.hourBegin} a ${place.hourEnd}.</p>
             <p>Las siguientes personas han sido registradas:</p>
             <ul>
                 ${list}
             </ul>
+             Recuerda para ingresar a la sede: 
+            <ul>
+              <li>Debes usar mascarilla correctamente y de manera permanente.</li> 
+              <li>Llevar su DNI y el de sus acompañantes.</li>
+              <li>Cuentas con 30 minutos de tolerancia. </li>
+              <li>Se recomienda asistir con zapatillas.</li>
+            <ul> 
           `,
         },
         (err: any, info: any) => {
@@ -514,5 +557,6 @@ createConnection().then((connection) => {
   });
 
   // start express server
+
   app.listen(8000);
 });
