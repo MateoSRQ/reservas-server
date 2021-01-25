@@ -529,7 +529,7 @@ createConnection().then((connection) => {
           //text: `Estimado/a ${rest.nombres}: Ud. ha sido confirmado`,
           html: `
             <p>Estimado/a ${rest.nombres}:</p>
-            <p>ueda confirmado su registro para ${place.place}, en la actividad de portiva ${place.name}, el día ${place.date} de ${place.hourBegin} a ${place.hourEnd}.</p>
+            <p>Queda confirmado su registro para ${place.place}, en la actividad de portiva ${place.name}, el día ${place.date} de ${place.hourBegin} a ${place.hourEnd}.</p>
             <p>Las siguientes personas han sido registradas:</p>
             <ul>
                 ${list}
