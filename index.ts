@@ -110,7 +110,10 @@ createConnection().then((connection) => {
         place: "Villa María del Triunfo",
         name: "Recreaciòn",
         dates: [mie, sab, dom],
-        quota: 10000,
+        quota: 9999,
+        low: 1,
+        hi: 9999,
+        group: "f",
         hoursBegin: [
           "06:00:00",
           "07:00:00",
@@ -140,6 +143,9 @@ createConnection().then((connection) => {
         name: "Tenis Cancha 01",
         dates: [mar, jue, sab],
         quota: 4,
+        low: 2,
+        hi: 4,
+        group: "t",
         hoursBegin: [
           "06:00:00",
           "07:00:00",
@@ -169,6 +175,9 @@ createConnection().then((connection) => {
         name: "Tenis Cancha 02",
         dates: [mar, jue, sab],
         quota: 4,
+        low: 2,
+        hi: 4,
+        group: "t",
         hoursBegin: [
           "06:00:00",
           "07:00:00",
@@ -198,6 +207,9 @@ createConnection().then((connection) => {
         name: "Atletismo",
         dates: [mar, jue, sab],
         quota: 9999,
+        low: 1,
+        hi: 9999,
+        group: "f",
         hoursBegin: [
           "06:00:00",
           "07:00:00",
@@ -227,6 +239,9 @@ createConnection().then((connection) => {
         name: "Ciclismo",
         dates: [mar, jue, sab],
         quota: 9999,
+        low: 1,
+        hi: 9999,
+        group: "f",
         hoursBegin: [
           "06:00:00",
           "07:00:00",
@@ -267,6 +282,9 @@ createConnection().then((connection) => {
                 hourEnd: config[i].hoursEnd[l],
                 day: config[i].dates[j][k].day,
                 door: config[i].door,
+                low: config[i].low,
+                hi: config[i].hi,
+                group: config[i].group,
               });
             }
           }
@@ -416,6 +434,8 @@ createConnection().then((connection) => {
     res.json(places);
   });
 
+  app.post("/reclamo", async function (req: Request, res: Response) {});
+
   app.post("/file", async function (req: Request, res: Response) {
     console.log(req.files);
     let sampleFile: any;
@@ -503,10 +523,14 @@ createConnection().then((connection) => {
         list += `<li>${other.nombres} ${other.apellido_paterno} ${other.apellido_materno}, -- ${other.nrodocumento}</li>`;
         console.log(other);
       }
-      await placeRepository.update(
-        { id: place.id },
-        { quota: place.quota - (grupo.length + 1) }
-      );
+      if (place.group === "t") {
+        await placeRepository.update({ id: place.id }, { quota: 0 });
+      } else {
+        await placeRepository.update(
+          { id: place.id },
+          { quota: place.quota - (grupo.length + 1) }
+        );
+      }
     } else {
       await placeRepository.update(
         { id: place.id },

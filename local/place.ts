@@ -28,4 +28,13 @@ export class Place {
 
   @Column()
   quota: number;
+
+  @Column()
+  low: number;
+
+  @Column()
+  hi: number;
+
+  @Column()
+  group: string;
 }
